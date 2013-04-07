@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <title>Ulam Spiral Generator with jQuery</title>
+        <meta name="description" content="Ulam Spiral Generator written with jQuery. The Ulam Spiral is also know as the Ulam Cloth.">
+        <!-- I like to use cdn's whenever possible -->
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+          <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+        
+          <style>
+              * {
+                  font-family: Arial;
+              }
+              body {
+                  background-color: #5872e8;
+                  background-image: -webkit-gradient(radial, 50% 0%,0,50% 0%,200, from(#2c4160), to(#5872e8));
+                  background-image: -webkit-radial-gradient(50% 0%, #5872e8, #2c4160);
+                  background-image: -moz-radial-gradient(50% 0%, #5872e8, #2c4160);
+                  background-image: -o-radial-gradient(50% 0%, #5872e8, #2c4160);
+                  background-image: -ms-radial-gradient(50% 0%, #5872e8, #2c4160);
+                  background-image: radial-gradient(50% 0%, #5872e8, #2c4160);
+              }
+
+              a {
+                  color: #fff;
+              }          
+            
+              #ulam ul {
+                  list-style-type: none;
+                  text-align: center;
+              }
+
+              #ulam li {
+                  background-color: #fff;
+                  position: relative;
+                  float: left;
+                  width: 40px;
+                  height: 40px;
+                  text-align: center; 
+                  border: 1px solid black;
+                  border-radius: 5px;
+                  margin: 2px;
+                  padding 5px;
+                  line-height: 40px;
+                  box-shadow: 2px 2px 3px #333;
+              }
+              #toolbar {
+                                   
+              }
+             
+              #output {
+                  border-radius: 50%;
+                  border: 2px solid white;
+                  line-height: 40px;
+                  text-align: center;
+                  padding: 2px;
+                  margin: 5px;
+                  color: #fff;
+                  background-color: red;
+                  box-shadow: 3px 3px 5px #333;
+              }
+              .prime {
+                  color: #fff;
+                  background-color: #5872e8 !important;
+              }
+        </style>
+    </head>
+
+    <body>
+        <script>
+            $(document).ready(function() {
+                // Apply the class numericOnly to any html input to force it to only accept numbers
+                // this class function isn't currently used on this page, but I find it handy to keep around
+                $("input.numericOnly").bind('keypress', function (e) {
+                    return ( e.which != 13 && e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 46) ? false : true;
+                });
+                // we assign the class "true" to the table when we find prime numbers, we just toggle the class the reveal the prime numbers
+                $("#showprimes").on('click', function () {
+                    $(".true").toggleClass("prime");
+			    });
+			    
+                $("#animatespiral").on('click', function () {
+                    cols = $("#cols").val();
+                    maxsize = cols*cols;
+                    var j = 1;
+
+                    (function spiralnext() {
+                        if (j < maxsize+1) {
+                            $('#' + j).effect('pulsate', { times: 1 }, 200, spiralnext);
+                            j++;
+                        }
+                    })();
+                });
+
+			    // we'll update the div when the slider is updated so the user has feedback
+                $('#cols').change(function() {
+                    var x = $(this).val();
+                    $('#output').text(x);
+                });
+                submit_num();
+            });
+                        
+            function submit_num() {
+                // remove any td from previous 
+                $("#ulam li").remove();
+                
+                var cells = [];
+                var x = 0,
+                y = 0,
+                delta = [0, -1],
+                cols = $("#cols").val();
+                maxsize = cols*cols;
+                for (i = 1; i <= maxsize; i++) {
+                    cells[i] = {};
+                    // I know I didn't have to add maxsize to the value, I just don't naturally visualize negative numbers
+                    cells[i]['row'] = y + maxsize;
+                    cells[i]['col'] = x + maxsize;
+                    cells[i]['dat'] = i;
+                    prime = isPrime(i);
+                    cells[i]['pri'] = prime;   
+
+                    if (x === y || (x < 0 && x === -y) || (x > 0 && x === 1-y)){
+                        // change direction
+                        delta = [-delta[1], delta[0]]            
+                    }
+
+                    x += delta[0];
+                    y += delta[1];        
+                }
+                // Now we sort the array based on row, then column, this actually stumped me for a bit, I'm not used 
+                // to sorting arrays on two fields, but fortunately, as usual, stackoverflow to the rescue
+                cells.sort( function(a,b){ 
+                    if (a.row != b.row) {
+                        return b.row - a.row;
+                    }
+                    return a.col - b.col 
+                });
+            
+                var trackrows = cells[1]['row'];
+
+                for (j = 0; j < maxsize; j++) {
+                    if (trackrows != cells[j]['row']) {
+                        // we need to close previous rows and start a new one if the row number changes
+                        // I'm thinking about rewriting this using ul, li
+                	    trackrows = cells[j]['row'];
+                    	$("#ulam ul").append('<div style="clear: both;">');
+                    }
+                    console.log('POINT ', cells[j]['dat'], cells[j]['row'], cells[j]['col']);
+                    $("#ulam ul").append('<li id="'+cells[j]['dat']+'" class="'+cells[j]['pri']+'">'+cells[j]['dat']+'</li>');
+                } 
+                $('#tools').show();              
+            }
+    
+            function isPrime(num) {
+                var prime = num != 1; // Everything but 1 can be prime
+                for (var i = 2; i < num; i++) {
+                    if (num % i == 0) {
+                        prime = false;
+                        break;
+                    };
+                };
+                return prime;
+            };            
+          
+        </script>
+
+            <h2>Ulam Spiral Generator</h2>
+            <p><a href="http://www.tangledwebsites.com/homework-assignment-a-ulam-spiral-generator-part-one-redux/">Read the blog post "Homework assignment, a Ulam Spiral Generator" (Redux) by Daniel Saint James</a></p>
+
+            <form>
+                <div> 
+                    <p>Use the slider to select the number of rows/columns you would like. 
+                    <span id="output">10</span>&nbsp;<input id="cols" type="range" min="10" max="40" value="10" onchange="submit_num();" />
+                    <span id="tools" style="display: none;">
+                        <input id="showprimes" type="button" value="Toggle Primes" /> <input id="animatespiral" type="button" value="Animate Spiral" />
+                    </span>
+                </div>
+                
+                <div style="clear: both;">
+                
+                <div id="ulam">
+                    <ul>
+                    
+                    </ul>
+                </div>
+                                
+            </form>
+    </body>
+</html>
