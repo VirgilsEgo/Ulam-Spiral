@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>Ulam Spiral Generator with jQuery</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
         <meta name="description" content="Ulam Spiral Generator written with jQuery. The Ulam Spiral is also know as the Ulam Cloth.">
         <!-- I like to use cdn's whenever possible -->
         <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
@@ -20,6 +23,8 @@
                   background-image: -o-radial-gradient(50% 0%, #5872e8, #2c4160);
                   background-image: -ms-radial-gradient(50% 0%, #5872e8, #2c4160);
                   background-image: radial-gradient(50% 0%, #5872e8, #2c4160);
+                  background: -webkit-radial-gradient(circle, #5872e8, #2c4160);
+
               }
 
               a {
@@ -146,7 +151,7 @@
                 	    trackrows = cells[j]['row'];
                     	$("#ulam ul").append('<div style="clear: both;">');
                     }
-                    console.log('POINT ', cells[j]['dat'], cells[j]['row'], cells[j]['col']);
+                    // console.log('POINT ', cells[j]['dat'], cells[j]['row'], cells[j]['col']);
                     $("#ulam ul").append('<li id="'+cells[j]['dat']+'" class="'+cells[j]['pri']+'">'+cells[j]['dat']+'</li>');
                 } 
                 $('#tools').show();              
@@ -166,7 +171,7 @@
         </script>
 
             <h2>Ulam Spiral Generator</h2>
-            <p><a href="http://www.tangledwebsites.com/homework-assignment-a-ulam-spiral-generator-part-one-redux/">Read the blog post "Homework assignment, a Ulam Spiral Generator" (Redux) by Daniel Saint James</a></p>
+            <p><a href="http://www.tangledwebsites.com/homework-assignment-a-ulam-spiral-generator-part-one-redux/" target="new">Read the blog post "Homework assignment, a Ulam Spiral Generator" (Redux) by Daniel Saint James</a></p>
 
             <form>
                 <div> 
@@ -177,7 +182,7 @@
                     </span>
                 </div>
                 
-                <div style="clear: both;">
+                <div style="clear: both;"></div>
                 
                 <div id="ulam">
                     <ul>
